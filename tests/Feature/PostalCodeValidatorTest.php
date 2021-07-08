@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use App\Http\Requests\StorePostalCodeRequest;
 use JMac\Testing\Traits\AdditionalAssertions;
 use App\Http\Controllers\PostalCodeController;
+use App\Http\Requests\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -73,13 +74,22 @@ class PostalCodeValidator extends TestCase
 
       function test_store_postal_code_abrevation()
       {
-        $request = new StorePostalCodeRequest();
-        $request->postal_code = '112*';
+        $validator = new Validator(); 
+        $data = $this->valid_data();      
+        if(!is_numeric($data->postal_code)){
+            $postalCode1 = $validator->hasAbbrevation($data);
+        } else {
+            $postalCode2 = PostalCode::create([
+                'postal_code' => $data->postal_code,
+                'sales_guy' => $data->sales_guy]);
+        }
+
         $response = $this->json('POST', 'api/postal-code',[
-            'postal_code' => $request->postal_code,
-            'sales_guy' => 1
+            'postal_code' => $data->postal_code,
+            'sales_guy' => $data->sales_guy
         ]);
         $response->assertStatus(201);
+        $response->assertJsonFragment(['postal_code' => $postalCode1->postal_code]);
       }
 
       function test_store_validates_using_a_form_request()
@@ -89,6 +99,18 @@ class PostalCodeValidator extends TestCase
             'store',
             StorePostalCodeRequest::class
         );
+        }
+
+        public function valid_data()
+        {
+            $request = new StorePostalCodeRequest();
+             $data = [
+                'postal_code' => '112*',
+                'sales_guy' => 1
+            ];
+            $request->postal_code = $data['postal_code'];
+            $request->sales_guy = $data['sales_guy'];
+            return $request;
         }
 
 }
