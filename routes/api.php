@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BusinessSalesGuyController;
 use App\Http\Controllers\PostalCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/postal-code' , [PostalCodeController::class, 'store']);
+
+Route::get('/getData', [BusinessSalesGuyController::class ,'fakeData']);
+Route::get('/dataSelected', [BusinessSalesGuyController::class ,'dataSelected']);

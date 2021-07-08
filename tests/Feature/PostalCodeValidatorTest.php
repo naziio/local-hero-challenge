@@ -21,7 +21,6 @@ class PostalCodeValidator extends TestCase
 
         $response->assertStatus(200);
     }
-
  
       function test_check_if_postal_code_has_wrong_input()
      {
@@ -69,12 +68,8 @@ class PostalCodeValidator extends TestCase
             'conflicts_items' => [
                 1 => 76554
             ]
-           
        ])->assertStatus(201);
-
-
      }
-
 
       function test_store_postal_code_abrevation()
       {
